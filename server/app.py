@@ -19,16 +19,52 @@ def home():
 
 @app.route('/animal/<int:id>')
 def animal_by_id(id):
-    return ''
+    animal = Animal.query.filter(Animal.id == id).first()
+
+    if not animal:
+        response_body = '<h1>404 animal not found</h1>'
+        return make_response(response_body, 404)
+    
+    response_body = f'''
+        <ul>Name: {animal.name}</ul>
+        <ul>Species: {animal.species}</ul>
+        <ul>Zookeeper: {animal.zookeeper_id}</ul>
+        <ul>Enclosure: {animal.enclosure_id}</ul>
+    '''
+
+    return make_response(response_body, 200)
 
 @app.route('/zookeeper/<int:id>')
 def zookeeper_by_id(id):
-    return ''
+    zookeeper = Zookeeper.query.filter(Zookeeper.id == id).first()
+
+    if not zookeeper:
+        response_body = '<h1>404 zookeeper not found</h1>'
+        return make_response(response_body, 404)
+    
+    response_body = f'''
+        <ul>Name: {zookeeper.name}</ul>
+        <ul>Birthday: {zookeeper.birthday}</ul>
+        <ul>Animals: {[animal.name for animal in zookeeper.animals]}</ul>
+    '''
+
+    return make_response(response_body, 200)
 
 @app.route('/enclosure/<int:id>')
 def enclosure_by_id(id):
-    return ''
+    enclosure = Enclosure.query.filter(Enclosure.id == id).first()
 
+    if not enclosure:
+        response_body = '<h1>404 enclosure not found</h1>'
+        return make_response(response_body, 404)
+
+    response_body = f'''
+        <ul>Environment: {enclosure.environment}</ul>
+        <ul>Open to Visitors: {enclosure.open_to_visitors}</ul>
+        <ul>Animals: {[animal.name for animal in enclosure.animals]}<ul/>
+    '''
+
+    return make_response(response_body, 200)
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
